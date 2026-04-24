@@ -1,12 +1,26 @@
-{ pkgs, flake, ... }:
+{ pkgs, inputs, system, flake, ... }:
 
 let
-  brightness-ctl-unwrapped = pkgs.rustPlatform.buildRustPackage {
-    pname = "brightness-ctl";
-    version = "0.1.0";
-    src = flake;
-    cargoLock.lockFile = flake + "/Cargo.lock";
+  toolchain = inputs.fenix.packages.${system}.fromToolchainFile {
+    file = flake + "/rust-toolchain.toml";
+    sha256 = "sha256-gh/xTkxKHL4eiRXzWv8KP7vfjSk61Iq48x47BEDFgfk=";
   };
+
+  craneLib = (inputs.crane.mkLib pkgs).overrideToolchain toolchain;
+
+  src = craneLib.cleanCargoSource flake;
+
+  commonArgs = {
+    inherit src;
+    strictDeps = true;
+  };
+
+  cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
+  brightness-ctl-unwrapped = craneLib.buildPackage (commonArgs // {
+    inherit cargoArtifacts;
+    pname = "brightness-ctl";
+  });
 in
 pkgs.symlinkJoin {
   name = "brightness-ctl-0.1.0";
