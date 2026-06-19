@@ -1,10 +1,14 @@
 { pkgs, inputs, system, flake, ... }:
 
 let
-  toolchain = inputs.fenix.packages.${system}.fromToolchainFile {
-    file = flake + "/rust-toolchain.toml";
-    sha256 = "sha256-gh/xTkxKHL4eiRXzWv8KP7vfjSk61Iq48x47BEDFgfk=";
-  };
+  toolchain = inputs.fenix.packages.${system}.complete.withComponents [
+    "cargo"
+    "rustc"
+    "rustfmt"
+    "clippy"
+    "rust-analyzer"
+    "rust-src"
+  ];
 
   craneLib = (inputs.crane.mkLib pkgs).overrideToolchain toolchain;
 
