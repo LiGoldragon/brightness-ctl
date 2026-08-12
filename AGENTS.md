@@ -15,3 +15,10 @@ laptops. Consumed by CriomOS as a flake input.
 - Push immediately after every change.
 - Mentci three-tuple commit format:
   `(("CommitType", "scope"), ("Action", "what"), ("Verdict", "why"))`.
+
+## Protos estate status
+
+Protos estate scope: out of scope
+Stack: not applicable
+Role: device tool
+This is scope metadata, not a stack.
